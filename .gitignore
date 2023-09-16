@@ -1,0 +1,7 @@
+Makefile
+sim/CMakeCache.txt
+sim/.cache
+sim/CMakeFiles
+sim/compile_commands.json
+sim/sim
+sim/cmake_install.cmake

@@ -31,7 +31,7 @@ void Node::populate(const std::vector<Body> bodies) {
         cm += b.mass * b.p;
     }
     cm = cm / bodies.size();
-    (
+    
     Eigen::Vector3d inc = (max-min)/2;
     for (int i = 0; i < 8; i++) {
         Eigen::Vector3d child_min(
@@ -143,7 +143,7 @@ void Node::set_subbounds(){
 
 void Node::integrate_one_node(Body cur, double theta, double dt){
     for(Node* child : children){
-        if(child->children[0] == NULL){
+        if (child == NULL) {
             cur.a += cur.compute_force(child->body) / cur.mass;
             cur.v += cur.a * dt;
             cur.p += cur.v * dt;

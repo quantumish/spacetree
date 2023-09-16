@@ -25,7 +25,7 @@ struct Node {
     Eigen::Vector3d cm;
     Eigen::Vector3d min; // bottom left
     Eigen::Vector3d max; // top right
-    std::array<Node*, 8> children;
+    Node* children[8];
 
     bool vector_within(Eigen::Vector3d v);
     void set_bounds(std::vector<Body> bodies); //Useful for initial node only

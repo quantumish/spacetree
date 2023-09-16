@@ -1,11 +1,12 @@
 #include "bhut.hpp"
+#include "bhut.cpp"
 #include <Eigen/Dense>
 #include <iostream>
 
-std::vector<Body> naive_nbody(std::vector<Body> bodies, dt){
+std::vector<Body> naive_nbody(std::vector<Body> bodies, double dt){
     for(Body b : bodies){
         for(Body other : bodies){
-            if(b != other){
+            if(!b.is_equal(other)){
                 b.a += b.compute_force(other) / b.mass;
             }
         }
@@ -18,13 +19,15 @@ std::vector<Body> naive_nbody(std::vector<Body> bodies, dt){
 }
 
 int main() {
-    vector<Body> bodies(10);
+    std::vector<Body> bodies(10);
     for (int i = 0; i < 10; i++) {
         bodies[i] = Body(1, Eigen::Vector3d::Random(), Eigen::Vector3d::Random(), Eigen::Vector3d::Random());
     }
     Node root = Node::build_octree(bodies);
-
-    Eigen::Vector3d a(1, 2, 3);
-    std::cout << a << "\n";
+    std::vector<Body> bodies2 = naive_nbody(bodies, 1);
+    std::cout << bodies2[0].p << "\n";
+    root.integration_step(bodies, 1.5, 1);
+    std::cout << bodies[0].p << "\n";
+    
     return 0;
 }

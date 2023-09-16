@@ -16,6 +16,7 @@ struct Body {
     Body();
     Body(float m, Eigen::Vector3d pos, Eigen::Vector3d vel, Eigen::Vector3d accel);
     Eigen::Vector3d compute_force(const Body& other); 
+    bool is_equal(const Body& other);
 };
 
 struct Node {
@@ -29,7 +30,7 @@ struct Node {
     void set_bounds(std::vector<Body> bodies); //Useful for initial node only
     void set_subbounds();
 
-    void integrate_one_node(double theta, double dt);
+    void integrate_one_node(Body cur, double theta, double dt);
     void integration_step(const std::vector<Body> bodies, double theta, double dt);
 
     Node(Eigen::Vector3d mini, Eigen::Vector3d maxi);

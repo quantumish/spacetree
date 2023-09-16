@@ -36,6 +36,7 @@ void Node::populate(const std::vector<Body> bodies) {
     cm = Eigen::Vector3d::Zero();
     for (const Body& b : bodies) {
         cm += b.mass * b.p;
+        mass += b.mass;
     }
     cm = cm / bodies.size();
     
@@ -59,11 +60,12 @@ void Node::populate(const std::vector<Body> bodies) {
     }
 }
 
-Eigen::Vector3d Body::compute_force(const Body& other){
-    Eigen::Vector3d r = other.p - p;
+Eigen::Vector3d Body::compute_force(Eigen::Vector3d pos, float m){
+    Eigen::Vector3d r = pos - p;
     double dist = r.norm();
     const double G = 6.67408e-11; //Change depending on what units we use
-    double force = G * mass * other.mass / (dist * dist);
+    double force = (G * mass * m) / (dist * dist);
+    std::cout << force * r.normalized() << "\n";
     return force * r.normalized();
 }
 
@@ -177,9 +179,9 @@ bool Node::is_sane_child(int i) {
     return std::abs(((long)(&children[i]->cm) - (long)&children)) < 0x100000;
 }
 
-void Node::integrate_one_node(Body cur, double theta, double dt){
+void Node::integrate_one_node(Body& cur, double theta, double dt){
     if (children[0] == NULL) {
-        cur.a += cur.compute_force(body) / cur.mass;
+        cur.a += cur.compute_force(body.p, body.mass) / cur.mass;
         cur.v += cur.a * dt;
         cur.p += cur.v * dt;
         return;
@@ -194,15 +196,17 @@ void Node::integrate_one_node(Body cur, double theta, double dt){
             children[i]->integrate_one_node(cur, theta, dt);
         }
         else{
-            cur.a += cur.compute_force(children[i]->body) / cur.mass;
+            cur.a += cur.compute_force(children[i]->cm, children[i]->mass) / cur.mass;
             cur.v += cur.a * dt;
             cur.p += cur.v * dt;
         }
     }
 }
 
-void Node::integration_step(std::vector<Body> bodies, double theta, double dt){
-    for(Body b : bodies){
+void Node::integration_step(std::vector<Body>& bodies, double theta, double dt){
+    for(Body& b : bodies){
+        Eigen::Vector3d before = b.p;
         integrate_one_node(b, theta, dt);
+        assert(b.p != before);
     }
 }

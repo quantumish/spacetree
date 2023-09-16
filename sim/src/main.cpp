@@ -25,7 +25,7 @@ int main() {
     Node root = Node::build_octree(bodies);
     std::vector<Body> bodies2 = naive_nbody(bodies, 1);
     std::cout << bodies2[0].p << "\n";
-    root.integration_step(bodies, 1.5, 1);
+    root.integration_step(bodies, 100, 1);
     std::cout << bodies[0].p << "\n";
     
     return 0;

@@ -1,4 +1,5 @@
 #include "bhut.hpp"
+#include "Eigen/src/Core/Matrix.h"
 #include <limits>
 #include <Eigen/Dense>
 
@@ -12,8 +13,6 @@ Body::Body()
     :mass(0), p(Eigen::Vector3d::Zero()), v(Eigen::Vector3d::Zero()), a(Eigen::Vector3d::Zero())
 {}
 
-Node::Node() {}
-
 bool Body::is_equal(const Body& other){
     return (mass == other.mass && p == other.p && v == other.v && a == other.a);
 }
@@ -21,6 +20,12 @@ bool Body::is_equal(const Body& other){
 Node::Node(Eigen::Vector3d mini, Eigen::Vector3d maxi)
     :min(mini), max(maxi)
 {}
+
+Node::Node() :min{}, max{}, cm{}, children{} {
+    for (int i = 0; i < 8; i++) {
+        children[i] = nullptr;
+    }
+}
 
 void Node::populate(const std::vector<Body> bodies) {
     if (bodies.size() == 1) {
@@ -153,14 +158,24 @@ void Node::set_subbounds(){
 // }
 
 
-std::array<Node, 8> Node::get_children() {
-	if (children[0] == nullptr) {
+Node Node::get_child(int i) {
+    std::cout << children << " " << i << "\n";
+    
+	if (children[i] == nullptr ||
+        body.p != Eigen::Vector3d::Zero() ||
+        !is_sane_child(i)) {
 		throw std::runtime_error("Whee");
 	}
-	return {*children[0], *children[1], *children[2], *children[3],
-        *children[4], *children[5], *children[6], *children[7]};
+    std::cout << children[i] << "\n";
+    std::cout << (long)&children[i] - (long)&children << "\n";
+    std::cout << (long)children[i] - (long)&children << "\n";
+    Node out = *children[i];
+	return out;
 }
 
+bool Node::is_sane_child(int i) {
+    return std::abs(((long)(&children[i]->cm) - (long)&children)) < 0x100000;
+}
 
 void Node::integrate_one_node(Body cur, double theta, double dt){
     if (children[0] == NULL) {
@@ -171,6 +186,7 @@ void Node::integrate_one_node(Body cur, double theta, double dt){
     }
     std::cout << "children: " << children << "\n\n\n";
     for(int i = 0; i < 8; i++){
+        if (!is_sane_child(i)) continue;
         std::cout << "child: " << children[i] << "\n\n";
         double s = (max - min).norm();
         double d = (cur.p - children[i]->cm).norm();

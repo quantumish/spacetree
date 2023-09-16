@@ -83,6 +83,8 @@ for root, dirs, files in os.walk(data_dir, topdown=True):
 
                         phi += inc
                     theta += inc
+                f.create_dataset("input",ip)
+                f.create_dataset("output",op)
                 f.close()
             else:
                 pname = name

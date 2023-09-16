@@ -69,15 +69,15 @@ for root, dirs, files in os.walk(data_dir, topdown=True):
                                 dmax = j[4]
                             dists = np.append(dists, [j[4]])
 
-                        y, x = np.histogram(dists, bins=25)
-                        x=x[:-1]
+                        Y, X = np.histogram(dists, bins=25)
+                        X=X[:-1]
                         model = SkewedGaussianModel()
                         params = model.make_params(amplitude=10, center=0, sigma=1, gamma=0)
-                        result = model.fit(y, params, x=x)
+                        result = model.fit(Y, params, x=X)
                         p1, p2 ,p3, p4 = result.params
                         if ((x == 0) and (y == 0)and (z == 1)):  # pos_x,y,z,v_x,y,z,angle_1,2
                             op = np.array([[dmax, p1, p2]])
-                            ip = np.array([theta, phi, M1, M2, collision_angle, collision_velocity])# dis, dense_a,b,c
+                            ip = np.array([[theta, phi, M1, M2, collision_angle, collision_velocity]])# dis, dense_a,b,c
                         else:
                             op = np.append(op, [[dmax, p1, p2]], axis=0)
                             ip = np.append(ip, [[theta, phi, M1, M2, collision_angle, collision_velocity]], axis=0)

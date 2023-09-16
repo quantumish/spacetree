@@ -147,8 +147,11 @@ void Node::integrate_one_node(Body cur, double theta, double dt){
             cur.a += cur.compute_force(child->body) / cur.mass;
             cur.v += cur.a * dt;
             cur.p += cur.v * dt;
+            return;
         }
-        else if((max - min).norm() < theta * (cur.p - child->cm).norm()){
+        double s = (max - min).norm();
+        double d = (cur.p - child->cm).norm();
+        if(s < theta * d){
             child->integrate_one_node(cur, theta, dt);
         }
         else{

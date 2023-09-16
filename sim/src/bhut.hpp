@@ -1,5 +1,4 @@
 #include <array>
-
 #include <Eigen/Dense>
 
 class Body {
@@ -10,6 +9,7 @@ class Body {
 
     Body();
     Body(float m, Eigen::Vector3d pos, Eigen::Vector3d vel, Eigen::Vector3d accel);
+    ComputeForce(Body other);
 };
 
 class Node {

@@ -18,6 +18,7 @@ Body::Body(float m, Eigen::Vector3d pos, Eigen::Vector3d vel, Eigen::Vector3d ac
 Eigen::Vector3d Body::ComputeForce(Body other){
     Eigen::Vector3d r = other.p - p;
     double dist = r.norm();
+    double G = 6.67408e-11; //Change depending on what units we use
     double force = G * mass * other.mass / (dist * dist);
     return force * r.normalized();
 }

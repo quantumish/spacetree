@@ -18,6 +18,7 @@ PYBIND11_MODULE(nbody_dev, m) {
 	py::class_<Node>(m, "Node")
 		.def_readonly("min", &Node::min)
 		.def_readonly("max", &Node::max)
+        .def("get_children", &Node::get_children)
 		.def_readonly("cm", &Node::cm)
 		.def_readonly("body", &Node::body)
         .def("integration_step", &Node::integration_step)

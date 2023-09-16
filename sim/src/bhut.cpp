@@ -9,8 +9,10 @@ Body::Body(float m, Eigen::Vector3d pos, Eigen::Vector3d vel, Eigen::Vector3d ac
 {}
 
 Body::Body()
-    :mass(0)
+    :mass(0), p(Eigen::Vector3d::Zero()), v(Eigen::Vector3d::Zero()), a(Eigen::Vector3d::Zero())
 {}
+
+Node::Node() {}
 
 bool Body::is_equal(const Body& other){
     return (mass == other.mass && p == other.p && v == other.v && a == other.a);
@@ -140,22 +142,43 @@ void Node::set_subbounds(){
     }
 }
 
+// std::array<Node, 8> Node::get_children() {
+//     std::vector<Node> out{};
+//     for (int i = 0; i < 8; i++) {
+//         if (children[0] != NULL) {
+//             out.push_back(*children[i]);
+//         }
+//     }
+//     return out;
+// }
+
+
+std::array<Node, 8> Node::get_children() {
+	if (children[0] == nullptr) {
+		throw std::runtime_error("Whee");
+	}
+	return {*children[0], *children[1], *children[2], *children[3],
+        *children[4], *children[5], *children[6], *children[7]};
+}
+
 
 void Node::integrate_one_node(Body cur, double theta, double dt){
-    for(Node* child : children){
-        if (child == NULL) {
-            cur.a += cur.compute_force(child->body) / cur.mass;
-            cur.v += cur.a * dt;
-            cur.p += cur.v * dt;
-            return;
-        }
+    if (children[0] == NULL) {
+        cur.a += cur.compute_force(body) / cur.mass;
+        cur.v += cur.a * dt;
+        cur.p += cur.v * dt;
+        return;
+    }
+    std::cout << "children: " << children << "\n\n\n";
+    for(int i = 0; i < 8; i++){
+        std::cout << "child: " << children[i] << "\n\n";
         double s = (max - min).norm();
-        double d = (cur.p - child->cm).norm();
+        double d = (cur.p - children[i]->cm).norm();
         if(s < theta * d){
-            child->integrate_one_node(cur, theta, dt);
+            children[i]->integrate_one_node(cur, theta, dt);
         }
         else{
-            cur.a += cur.compute_force(child->body) / cur.mass;
+            cur.a += cur.compute_force(children[i]->body) / cur.mass;
             cur.v += cur.a * dt;
             cur.p += cur.v * dt;
         }

@@ -27,6 +27,8 @@ struct Node {
     Eigen::Vector3d max; // top right
     Node* children[8];
 
+    std::array<Node, 8> get_children();
+
     bool vector_within(Eigen::Vector3d v);
     void set_bounds(std::vector<Body> bodies); //Useful for initial node only
     void set_subbounds();
@@ -34,6 +36,7 @@ struct Node {
     void integrate_one_node(Body b, double theta, double dt);
     void integration_step(const std::vector<Body> bodies, double theta, double dt);
 
+    Node();
     Node(Eigen::Vector3d mini, Eigen::Vector3d maxi);
     void populate(const std::vector<Body> bodies);
     static Node build_octree(const std::vector<Body> bodies);

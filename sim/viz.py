@@ -64,9 +64,10 @@ pv.set_plot_theme("paraview")
 p = pv.Plotter(notebook=False, off_screen=True)
 p.open_gif("wave.gif")
 bodies = [nbody_dev.Body(10, np.random.rand(3,1)*50, np.zeros((3,1)), np.zeros((3,1)))  for _i in range(10)]
-for f in range(2):
+for f in range(3):
     tree = nbody_dev.Node.build_octree(bodies)
     tree.integration_step(bodies, 1.5, 1)
+    p.clear()
     viz_tree(p, tree, bodies)
     p.write_frame()
 

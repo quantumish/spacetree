@@ -29,10 +29,11 @@ class Node {
     void set_bounds(std::vector<Body> bodies); //Useful for initial node only
     void set_subbounds();
 
+    void integrate_one_node(double theta, double dt);
+    void integration_step(const std::vector<Body> bodies, double theta, double dt);
+
     Node(Eigen::Vector3d mini, Eigen::Vector3d maxi);
     void populate(const std::vector<Body> bodies);
     static Node build_octree(const std::vector<Body> bodies);
-    void integrate_one_node(double theta, double dt);
-    void integration_step(const std::vector<Body> bodies, double theta, double dt);
 };
 

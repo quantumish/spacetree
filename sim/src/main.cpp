@@ -1,5 +1,4 @@
 #include "bhut.hpp"
-#include "bhut.cpp"
 #include <Eigen/Dense>
 #include <iostream>
 

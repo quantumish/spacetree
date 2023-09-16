@@ -13,7 +13,7 @@ class Body {
 
     Body();
     Body(float m, Eigen::Vector3d pos, Eigen::Vector3d vel, Eigen::Vector3d accel);
-    float compute_force(const Body& other); 
+    Eigen::Vector3d compute_force(const Body& other); 
 };
 
 class Node {

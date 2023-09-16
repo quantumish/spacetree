@@ -81,3 +81,27 @@ void Node::set_subbounds(){ //Not correct
         }
     }
 }
+
+void integrate_one_node(Body cur, double theta, double dt){
+    for(Node* child : children){
+        if(child.children == NULL){
+            cur.a += cur.compute_force(child->body) / cur.mass;
+            cur.v += cur.a * dt;
+            cur.p += cur.v * dt;
+        }
+        else if((cur.p - child->cm).norm() < theta * (max - min).norm()/2.0){
+            child->integrate_one_node(cur, theta, dt);
+        }
+        else{
+            cur.a += cur.compute_force(child->body) / cur.mass;
+            cur.v += cur.a * dt;
+            cur.p += cur.v * dt;
+        }
+    }
+}
+
+void integration_step(std::vector<Body> bodies, double theta, double dt){
+    for(Body b : bodies){
+        integrate_one_node(b, theta, dt);
+    }
+}

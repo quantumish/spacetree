@@ -7,6 +7,8 @@
 
 class Body {
     float mass;
+    float angular_momentum = 1;
+    float radius = 1;
     Eigen::Vector3d p;
     Eigen::Vector3d v;
     Eigen::Vector3d a;
@@ -24,11 +26,13 @@ class Node {
     std::array<Node*, 8> children;
 
     bool vector_within(Eigen::Vector3d v);
-    void set_bounds(std::vector<Body> bodies);
+    void set_bounds(std::vector<Body> bodies); //Useful for initial node only
     void set_subbounds();
 
     Node(Eigen::Vector3d mini, Eigen::Vector3d maxi);
     void populate(const std::vector<Body> bodies);
     static Node build_octree(const std::vector<Body> bodies);
+    void integrate_one_node(double theta, double dt);
+    void integration_step(const std::vector<Body> bodies, double theta, double dt);
 };
 

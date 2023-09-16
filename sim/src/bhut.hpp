@@ -18,10 +18,14 @@ class Body {
 
 class Node {
     Body body;
-    Eigen::Vector3d com;
+    Eigen::Vector3d cm;
     Eigen::Vector3d min; // bottom left
     Eigen::Vector3d max; // top right
     std::array<Node*, 8> children;
+
+    bool vector_within(Eigen::Vector3d v);
+    Eigen::Vector3d get_min(std::vector<Body> bodies);
+    Eigen::Vector3d get_max(std::vector<Body> bodies);
 
     Node(Eigen::Vector3d mini, Eigen::Vector3d maxi);
     void populate(const std::vector<Body> bodies);

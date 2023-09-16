@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(nbody)
-set(CMAKE_CXX_COMPILER "clang++")
+project(sim)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -18,16 +17,16 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 # find_package(TBB REQUIRED tbb)
 
-add_executable(nbody src/main.cpp src/bhut.cpp)
-target_link_libraries(nbody PUBLIC) # MPI::MPI_CXX
+add_executable(sim src/main.cpp src/bhut.cpp)
+target_link_libraries(sim PUBLIC) # MPI::MPI_CXX
 if(OpenMP_CXX_FOUND)  
-  target_link_libraries(nbody PUBLIC OpenMP::OpenMP_CXX)
+  target_link_libraries(sim PUBLIC OpenMP::OpenMP_CXX)
   # include_directories(OpenMP::OpenMP_INCLUDE_DIRS)
 endif()
 
-find_package(pybind11 CONFIG REQUIRED)
-include_directories(${pybind11_INCLUDE_DIRS})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -stdlib=libc++ -fopenmp -g")
-pybind11_add_module(nbody_dev ./src/pybind.cpp ./src/bhut.cpp)
+# find_package(pybind11 CONFIG REQUIRED)
+# include_directories(${pybind11_INCLUDE_DIRS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fopenmp -g")
+# pybind11_add_module(nbody_dev ./src/pybind.cpp ./src/bhut.cpp)
 # target_link_libraries(nbody ${OpenCL_LIBRARY})
 # target_link_libraries(sub_string_finder TBB::tbb)

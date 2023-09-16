@@ -36,7 +36,7 @@ bool Node::vector_within(Eigen::Vector3d v) {
             v[2] >= min[2] && v[2] <= max[2]);
 }
 
-void set_min(std::vector<Body> bodies){
+void set_bounds(std::vector<Body> bodies){
     double minX = std::numeric_limits<double>::max();
     double minY = std::numeric_limits<double>::max();
     double minZ = std::numeric_limits<double>::max();

@@ -2,12 +2,14 @@
 #include <limits>
 #include <Eigen/Dense>
 
+#include <iostream>
+
 Body::Body(float m, Eigen::Vector3d pos, Eigen::Vector3d vel, Eigen::Vector3d accel)
     :mass(m), p(pos), v(vel), a(accel)
 {}
 
 Body::Body()
-    :mass(0), p(0), v(0), a(0)
+    :mass(0)
 {}
 
 bool Body::is_equal(const Body& other){
@@ -22,14 +24,14 @@ void Node::populate(const std::vector<Body> bodies) {
     if (bodies.size() == 1) {
         body = bodies[0];
         return;
-    }
+    } else if (bodies.size() == 0) { return; }
 
-    cm = Eigen::Vector3d(0);
+    cm = Eigen::Vector3d::Zero();
     for (const Body& b : bodies) {
         cm += b.mass * b.p;
     }
     cm = cm / bodies.size();
-    
+    (
     Eigen::Vector3d inc = (max-min)/2;
     for (int i = 0; i < 8; i++) {
         Eigen::Vector3d child_min(
@@ -44,7 +46,7 @@ void Node::populate(const std::vector<Body> bodies) {
             if (children[i]->vector_within(b.p)) {
                 child_bodies.push_back(b);
             }
-        }        
+        }
 
         children[i]->populate(child_bodies);
     }
@@ -98,9 +100,9 @@ void Node::set_bounds(std::vector<Body> bodies){
 }
 
 Node Node::build_octree(const std::vector<Body> bodies){
-    Node root = Node(Eigen::Vector3d(0), Eigen::Vector3d(0));
+    Node root = Node(Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero());
     root.set_bounds(bodies);
-    root.populate(bodies);
+    root.populate(bodies); 
     return root;
 }
 

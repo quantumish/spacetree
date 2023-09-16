@@ -20,5 +20,7 @@ PYBIND11_MODULE(nbody_dev, m) {
 		.def_readonly("max", &Node::max)
 		.def_readonly("cm", &Node::cm)
 		.def_readonly("body", &Node::body)
+        .def("integration_step", &Node::integration_step)
 		.def_static("build_octree", &Node::build_octree);
 }
+

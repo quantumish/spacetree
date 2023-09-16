@@ -143,7 +143,7 @@ void Node::set_subbounds(){
 
 void Node::integrate_one_node(Body cur, double theta, double dt){
     for(Node* child : children){
-        if(child->children[0] == NULL){
+        if (child == NULL) {
             cur.a += cur.compute_force(child->body) / cur.mass;
             cur.v += cur.a * dt;
             cur.p += cur.v * dt;

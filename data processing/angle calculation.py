@@ -34,8 +34,8 @@ for root, dirs, files in os.walk(data_dir, topdown=True):
                 z_c = 0
 
                 for i in range(2, len(linesop)):
-                    val_i = list(map(float, linesip[:-1].split(" ")))
-                    val_o = list(map(float, linesop[:-1].split(" ")))
+                    val_i = list(map(float, linesip[i][:-1].split(" ")))
+                    val_o = list(map(float, linesop[i][:-1].split(" ")))
                     xo, yo, zo, v1o, v2o, v3o = val_o[:6]
                     xi, yi, zi, v1i, v2i, v3i, m = val_i[:7]
                     xo -= x_c
@@ -70,10 +70,11 @@ for root, dirs, files in os.walk(data_dir, topdown=True):
                             dists = np.append(dists, [j[4]])
 
                         y, x = np.histogram(dists, bins=25)
+                        x=x[:-1]
                         model = SkewedGaussianModel()
                         params = model.make_params(amplitude=10, center=0, sigma=1, gamma=0)
                         result = model.fit(y, params, x=x)
-                        p1, p2 = result.params
+                        p1, p2 ,p3, p4 = result.params
                         if (x == 0 and y == 0 and z == 1):  # pos_x,y,z,v_x,y,z,angle_1,2
                             op = np.array([[dmax, p1, p2]])
                             ip = np.array([theta, phi, M1, M2, collision_angle, collision_velocity])# dis, dense_a,b,c
@@ -86,6 +87,7 @@ for root, dirs, files in os.walk(data_dir, topdown=True):
                 f.create_dataset("input",ip)
                 f.create_dataset("output",op)
                 f.close()
+                break
             else:
                 pname = name
         elif(name=="setup.txt"):
@@ -94,13 +96,13 @@ for root, dirs, files in os.walk(data_dir, topdown=True):
             lines = open(D, "r").readlines()
             for line in lines:
                 if 'vel_vesc_touching_ball' in line:
-                    collision_velocity = int(line[line.find(":")+1:])
+                    collision_velocity = float(line[line.find(":")+1:-2])
                 elif "impact_angle_touching_ball" in line:
-                    collision_angle = int(line[line.find(":")+1:])
+                    collision_angle = float(line[line.find(":")+1:-2])
                 elif "M_targ" in line:
-                    M1 = int(line[line.find(":")+1:])
+                    M1 = float(line[line.find(":")+1:-2])
                 elif "M_proj" in line:
-                    M2 = int(line[line.find(":")+1:])
+                    M2 = float(line[line.find(":")+1:-2])
                 else:
                     continue
 

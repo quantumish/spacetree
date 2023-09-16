@@ -19,10 +19,12 @@ void Node::populate(const std::vector<Body> bodies) {
         body = bodies[0];
         return;
     }
-    
+
+    cm = Eigen::Vector3d(0);
     for (const Body& b : bodies) {
-        m
+        cm += b.mass * b.p;
     }
+    cm = cm / bodies.size();
     
     Eigen::Vector3d inc = (max-min)/2;
     for (int i = 0; i < 8; i++) {
@@ -32,6 +34,11 @@ void Node::populate(const std::vector<Body> bodies) {
             min[2] + (inc[2] * ((i & 4) == 4))
 		);        
         children[i] = new Node(child_min, child_min + inc);
+
+        // TODO: make list of bodies within the bounds of the child
+
+        // recurse with this list
+        children[i]->populate(child_bodies);
     }
 }
 
@@ -96,3 +103,27 @@ void Node::set_subbounds(){ //Not correct
     }
 }
 
+
+void integrate_one_node(Body cur, double theta, double dt){
+    for(Node* child : children){
+        if(child.children == NULL){
+            cur.a += cur.compute_force(child->body) / cur.mass;
+            cur.v += cur.a * dt;
+            cur.p += cur.v * dt;
+        }
+        else if((cur.p - child->cm).norm() < theta * (max - min).norm()/2.0){
+            child->integrate_one_node(cur, theta, dt);
+        }
+        else{
+            cur.a += cur.compute_force(child->body) / cur.mass;
+            cur.v += cur.a * dt;
+            cur.p += cur.v * dt;
+        }
+    }
+}
+
+void integration_step(std::vector<Body> bodies, double theta, double dt){
+    for(Body b : bodies){
+        integrate_one_node(b, theta, dt);
+    }
+}

@@ -24,8 +24,8 @@ target_link_libraries(sim PUBLIC) # MPI::MPI_CXX
 #   # include_directories(OpenMP::OpenMP_INCLUDE_DIRS)
 # endif()
 
-# find_package(pybind11 CONFIG REQUIRED)
-# include_directories(${pybind11_INCLUDE_DIRS})
+find_package(pybind11 CONFIG REQUIRED)
+include_directories(${pybind11_INCLUDE_DIRS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -g")
 # pybind11_add_module(nbody_dev ./src/pybind.cpp ./src/bhut.cpp)
 # target_link_libraries(nbody ${OpenCL_LIBRARY})

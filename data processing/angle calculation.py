@@ -75,7 +75,7 @@ for root, dirs, files in os.walk(data_dir, topdown=True):
                         params = model.make_params(amplitude=10, center=0, sigma=1, gamma=0)
                         result = model.fit(y, params, x=x)
                         p1, p2 ,p3, p4 = result.params
-                        if (x == 0 and y == 0 and z == 1):  # pos_x,y,z,v_x,y,z,angle_1,2
+                        if ((x == 0) and (y == 0)and (z == 1)):  # pos_x,y,z,v_x,y,z,angle_1,2
                             op = np.array([[dmax, p1, p2]])
                             ip = np.array([theta, phi, M1, M2, collision_angle, collision_velocity])# dis, dense_a,b,c
                         else:

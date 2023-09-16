@@ -36,10 +36,13 @@ bool Node::vector_within(Eigen::Vector3d v) {
             v[2] >= min[2] && v[2] <= max[2]);
 }
 
-Eigen::Vector3d get_min(std::vector<Body> bodies){
+void set_min(std::vector<Body> bodies){
     double minX = std::numeric_limits<double>::max();
     double minY = std::numeric_limits<double>::max();
     double minZ = std::numeric_limits<double>::max();
+    double maxX = 0;
+    double maxY = 0;
+    double maxZ = 0;
 
     for(Body b : bodies){
         if(b.p[0] < minX){
@@ -51,17 +54,6 @@ Eigen::Vector3d get_min(std::vector<Body> bodies){
         if(b.p[2] < minZ){
             minZ = b.p[2];
         }
-    }
-
-    return Eigen::Vector3d(minX, minY, minZ);
-}
-
-Eigen::Vector3d get_max(std::vector<Body> bodies){
-    double maxX = 0;
-    double maxY = 0;
-    double maxZ = 0;
-
-    for(Body b : bodies){
         if(b.p[0] > maxX){
             maxX = b.p[0];
         }
@@ -73,5 +65,19 @@ Eigen::Vector3d get_max(std::vector<Body> bodies){
         }
     }
 
-    return Eigen::Vector3d(maxX, maxY, maxZ);
+    max = Eigen::Vector3d(maxX, maxY, maxZ);
+    min = Eigen::Vector3d(minX, minY, minZ);
+}
+
+void Node::set_subbounds(){ //Not correct
+    Eigen::Vector3d inc = (max-min)/2;
+    for (int i = 0; i < 3; i++) {
+        for (int j : {-1, 1}) {
+            Eigen::Vector3d new_min = min;
+            Eigen::Vector3d new_max = max;
+            new_min[i] += j*inc[i];
+            new_max[i] += j*inc[i];
+            children[i*2+j] = new Node(new_min, new_max);
+        }
+    }
 }

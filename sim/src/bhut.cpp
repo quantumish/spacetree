@@ -15,10 +15,23 @@ Node::Node(Eigen::Vector3d mini, Eigen::Vector3d maxi)
 {}
 
 void Node::populate(const std::vector<Body> bodies) {
+    if (bodies.size() == 1) {
+        body = bodies[0];
+        return;
+    }
+    
+    for (const Body& b : bodies) {
+        m
+    }
+    
     Eigen::Vector3d inc = (max-min)/2;
-    for (int i = 0; i < 3; i++) {
-        for (int j : {-1, 1}) {
-        }
+    for (int i = 0; i < 8; i++) {
+        Eigen::Vector3d child_min(
+            min[0] + (inc[0] * ((i & 1) == 1)),
+            min[1] + (inc[1] * ((i & 2) == 2)),
+            min[2] + (inc[2] * ((i & 4) == 4))
+		);        
+        children[i] = new Node(child_min, child_min + inc);
     }
 }
 
@@ -36,7 +49,7 @@ bool Node::vector_within(Eigen::Vector3d v) {
             v[2] >= min[2] && v[2] <= max[2]);
 }
 
-void set_bounds(std::vector<Body> bodies){
+void Node::set_bounds(std::vector<Body> bodies){
     double minX = std::numeric_limits<double>::max();
     double minY = std::numeric_limits<double>::max();
     double minZ = std::numeric_limits<double>::max();
@@ -69,6 +82,7 @@ void set_bounds(std::vector<Body> bodies){
     min = Eigen::Vector3d(minX, minY, minZ);
 }
 
+// FIXME/TODO actually implement
 void Node::set_subbounds(){ //Not correct
     Eigen::Vector3d inc = (max-min)/2;
     for (int i = 0; i < 3; i++) {
@@ -81,3 +95,4 @@ void Node::set_subbounds(){ //Not correct
         }
     }
 }
+

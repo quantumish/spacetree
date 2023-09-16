@@ -10,6 +10,10 @@ Body::Body()
     :mass(0), p(0), v(0), a(0)
 {}
 
+bool Body::is_equal(const Body& other){
+    return (mass == other.mass && p == other.p && v == other.v && a == other.a);
+}
+
 Node::Node(Eigen::Vector3d mini, Eigen::Vector3d maxi)
     :min(mini), max(maxi)
 {}
@@ -38,7 +42,7 @@ void Node::populate(const std::vector<Body> bodies) {
         std::vector<Body> child_bodies;
         for (const Body& b : bodies) {
             if (children[i]->vector_within(b.p)) {
-                bounded_bodies.push_back(b);
+                child_bodies.push_back(b);
             }
         }        
 
@@ -103,29 +107,29 @@ Node Node::build_octree(const std::vector<Body> bodies){
 void Node::set_subbounds(){ 
     Eigen::Vector3d inc = (max-min)/2;
     if(children[0] == NULL){
-        child[0].min = min;
-        child[0].max = min + inc;
+        children[0]->min = min;
+        children[0]->max = min + inc;
 
-        child[1].min = Eigen::Vector3d(min[0] + inc[0], min[1], min[2]);
-        child[1].max = child[1].min + inc;
+        children[1]->min = Eigen::Vector3d(min[0] + inc[0], min[1], min[2]);
+        children[1]->max = children[1]->min + inc;
 
-        child[2].min = Eigen::Vector3d(min[0], min[1] + inc[1], min[2]);
-        child[2].max = child[2].min + inc;
+        children[2]->min = Eigen::Vector3d(min[0], min[1] + inc[1], min[2]);
+        children[2]->max = children[2]->min + inc;
 
-        child[3].min = Eigen::Vector3d(min[0] + inc[0], min[1] + inc[1], min[2]);
-        child[3].max = child[3].min + inc;
+        children[3]->min = Eigen::Vector3d(min[0] + inc[0], min[1] + inc[1], min[2]);
+        children[3]->max = children[3]->min + inc;
 
-        child[4].min = Eigen::Vector3d(min[0], min[1], min[2] + inc[2]);
-        child[4].max = child[4].min + inc;
+        children[4]->min = Eigen::Vector3d(min[0], min[1], min[2] + inc[2]);
+        children[4]->max = children[4]->min + inc;
 
-        child[5].min = Eigen::Vector3d(min[0] + inc[0], min[1], min[2] + inc[2]);
-        child[5].max = child[5].min + inc;
+        children[5]->min = Eigen::Vector3d(min[0] + inc[0], min[1], min[2] + inc[2]);
+        children[5]->max = children[5]->min + inc;
 
-        child[6].min = Eigen::Vector3d(min[0], min[1] + inc[1], min[2] + inc[2]);
-        child[6].max = child[6].min + inc;
+        children[6]->min = Eigen::Vector3d(min[0], min[1] + inc[1], min[2] + inc[2]);
+        children[6]->max = children[6]->min + inc;
 
-        child[7].min = Eigen::Vector3d(min[0] + inc[0], min[1] + inc[1], min[2] + inc[2]);
-        child[7].max = child[7].min + inc;
+        children[7]->min = Eigen::Vector3d(min[0] + inc[0], min[1] + inc[1], min[2] + inc[2]);
+        children[7]->max = children[7]->min + inc;
     }
     else{
         for(int i = 0; i < 8; i++){
@@ -135,9 +139,9 @@ void Node::set_subbounds(){
 }
 
 
-void integrate_one_node(Body cur, double theta, double dt){
+void Node::integrate_one_node(Body cur, double theta, double dt){
     for(Node* child : children){
-        if(child.children == NULL){
+        if(child->children[0] == NULL){
             cur.a += cur.compute_force(child->body) / cur.mass;
             cur.v += cur.a * dt;
             cur.p += cur.v * dt;
@@ -153,7 +157,7 @@ void integrate_one_node(Body cur, double theta, double dt){
     }
 }
 
-void integration_step(std::vector<Body> bodies, double theta, double dt){
+void Node::integration_step(std::vector<Body> bodies, double theta, double dt){
     for(Body b : bodies){
         integrate_one_node(b, theta, dt);
     }

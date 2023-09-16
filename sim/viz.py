@@ -30,11 +30,10 @@ def viz_tree(p, tree, bodies):
 
 p = pv.Plotter(notebook=False, off_screen=True)
 p.open_gif("wave.gif")
-bodies = [nbody_dev.Body(np.random.rand(3,1)*50, np.zeros((3,1)), np.zeros((3,1)))  for _i in range(50)]
+bodies = [nbody_dev.Body(1, np.random.rand(3,1)*50, np.zeros((3,1)), np.zeros((3,1)))  for _i in range(50)]
 for f in range(5):
-    # tree = nbody_dev.Octree(bodies)
-    # tree.populate_tree()
-    tree = nbody_dev.parallel_tick(bodies)
+    root = nbody_dev.Node.build_octree(bodies)
+    root.integration_step(bodies, 1.5, 1)
     viz_tree(p, tree, bodies)
     p.write_frame()
 
